@@ -1,0 +1,28 @@
+syntax: glob
+*.orig
+*.rej
+*~
+*.o
+*.lo
+*.la
+*.a
+*.so
+*.in
+*.Plo
+tests/*.err
+aclocal.m4
+config.h.in
+configure
+Makefile
+config.h
+config.log
+config.status
+libtool
+stamp-h1
+build-aux
+autom4te.cache
+
+syntax: regexp
+.*\#.*\#$
+.libs
+.deps
