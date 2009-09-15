@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 {
         int status;
 	struct user_regs_struct regs;
-	itrace_handle *trace;
+	itrace_handle trace;
 
 	trace = itrace_init();
 	itrace_set_peek_mem_func(trace, peek_memory);
