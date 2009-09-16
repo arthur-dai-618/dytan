@@ -41,26 +41,40 @@ void peek_memory(uint8_t* buf, size_t cnt, off_t addr) {
 
 int main(int argc, char *argv[])
 {
-        int status;
-	struct user_regs_struct regs;
-	itrace_handle trace;
+        int status, c;
 
-	trace = itrace_init();
+	while((c = getopt (argc, argv, "abc:")) != -1) {
+		switch(c) {
+		}	
+	}
+
+	int cnt = argc -(optind);
+	int i;
+	char *args[cnt + 1];
+	for(i = 0; i < cnt; i++) {
+		args[i] = argv[optind+i];
+		printf("%s\n", argv[optind+i]);
+	}
+	args[cnt] = NULL;
+
+	itrace_handle trace = itrace_init();
 	itrace_set_peek_mem_func(trace, peek_memory);
 
-        switch (pid = fork()) {
+        switch(pid = fork()) {
 	        case -1:
 	                perror("fork");
 	                break;
 
 	        case 0:
 	                ptrace(PTRACE_TRACEME, 0, 0, 0);
-	                execl("/bin/ls", "ls", NULL);
+	                execv(args[0], args);
+			printf("error\n");
 	                break;
 
 	        default:
 	                wait(&status); 
 	                while(SIGTRAP == WSTOPSIG(status)) {
+				struct user_regs_struct regs;
 				ptrace(PTRACE_GETREGS, pid, NULL, &regs);
 
 				itrace_trace(trace, regs.eip);	
