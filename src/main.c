@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <sys/user.h>
+#include <getopt.h>
 
 #include "itrace.h"
 
@@ -43,14 +44,9 @@ void peek_memory(uint8_t* buf, size_t cnt, off_t addr) {
     }    
 }
 
-
-
 int main(int argc, char *argv[])
 {
         int status, c;
-
-	printf("%d %d\n", sizeof(long), sizeof(uint32_t));
-	exit(1);
 
 	while((c = getopt (argc, argv, "abc:")) != -1) {
 		switch(c) {

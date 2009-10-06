@@ -44,13 +44,14 @@ void itrace_set_peek_mem_func(itrace_t *tracer, peek_mem_func_t f) {
 
 void itrace_trace(itrace_t *tracer, uint32_t eip) {
 	uint8_t code[12];
-	tracer->peek_mem(code, sizeof(code), eip);	
+	tracer->peek_mem(code, sizeof(code), eip);
 
 	ud_set_pc(tracer->udis, eip);
 	ud_set_input_buffer(tracer->udis, code, sizeof(code));
 	ud_disassemble(tracer->udis);
 
-	IRBlock *block = decode(tracer->udis);
-
 	printf("[%#"PRIx32"] %-24s\n", eip, ud_insn_asm(tracer->udis));
+
+	IRBlock *block = decode(tracer->udis);
+	ppIRBlock(block);	
 }

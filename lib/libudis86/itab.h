@@ -713,7 +713,7 @@ enum ud_mnemonic_code {
 
 
 
-extern const char* ud_mnemonics_str[];;
+extern const char* ud_mnemonics_str[];
 extern struct ud_itab_entry* ud_itab_list[];
 
 #endif

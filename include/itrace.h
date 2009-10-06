@@ -3,12 +3,14 @@
 
 #include <stdint.h>
 #include <sys/user.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 typedef struct _itrace_t itrace_t;
 
-typedef enum _reg_t reg_t;
+typedef uint32_t reg_t;
 
-typedef void (*peek_mem_func_t)(uint8_t* buf, size_t cnt, off_t addr);
+typedef void (*peek_mem_func_t)(uint8_t *buf, size_t cnt, off_t addr);
 typedef uint32_t (*peek_reg_func_t)(reg_t reg);
 
 extern itrace_t *itrace_init();

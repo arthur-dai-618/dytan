@@ -9,6 +9,7 @@ syntax: glob
 *.so
 *.in
 *.Plo
+*.swp
 tests/*.err
 aclocal.m4
 config.h.in
