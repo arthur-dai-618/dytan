@@ -1,51 +1,56 @@
+#include "itrace.h"
+
 #include <stdlib.h>
 #include <assert.h>
 #include <inttypes.h>
 
-#include "itrace.h"
+#include "ir.h"
 #include "udis86.h"
+#include "decode.h"
 
 struct _itrace_t {
-	ud_t *ud_obj;	
+	ud_t *udis;	
 	peek_mem_func_t peek_mem;
 	peek_reg_func_t peek_reg;
 };
 
 itrace_t *itrace_init() {
-	itrace_t *trace;
+	itrace_t *tracer;
 
-	trace = (itrace_t *) malloc(sizeof(*trace));
-	assert(trace);
+	tracer = (itrace_t *) malloc(sizeof(*tracer));
+	assert(tracer);
 
-	trace->ud_obj = (ud_t *) malloc(sizeof(*(trace->ud_obj)));
+	tracer->udis = (ud_t *) malloc(sizeof(*(tracer->udis)));
 
-	ud_init(trace->ud_obj);
-	ud_set_mode(trace->ud_obj, 32);
-	ud_set_syntax(trace->ud_obj, UD_SYN_INTEL);
+	ud_init(tracer->udis);
+	ud_set_mode(tracer->udis, 32);
+	ud_set_syntax(tracer->udis, UD_SYN_INTEL);
 
-        return trace;
+        return tracer;
 }
 
-void itrace_free(itrace_t *trace) {
-	free(trace->ud_obj);
-	free(trace);
+void itrace_free(itrace_t *tracer) {
+	free(tracer->udis);
+	free(tracer);
 }
 
-void itrace_set_peek_reg_func(itrace_t *trace, peek_reg_func_t f) {
-	trace->peek_reg = f;
+void itrace_set_peek_reg_func(itrace_t *tracer, peek_reg_func_t f) {
+	tracer->peek_reg = f;
 }
 
-void itrace_set_peek_mem_func(itrace_t *trace, peek_mem_func_t f) {
-	trace->peek_mem = f;
+void itrace_set_peek_mem_func(itrace_t *tracer, peek_mem_func_t f) {
+	tracer->peek_mem = f;
 }
 
-void itrace_trace(itrace_t *trace, uint32_t eip) {
+void itrace_trace(itrace_t *tracer, uint32_t eip) {
 	uint8_t code[12];
-	trace->peek_mem(code, sizeof(code), eip);	
+	tracer->peek_mem(code, sizeof(code), eip);	
 
-	ud_set_pc(trace->ud_obj, eip);
-	ud_set_input_buffer(trace->ud_obj, code, sizeof(code));
-	ud_disassemble(trace->ud_obj);
+	ud_set_pc(tracer->udis, eip);
+	ud_set_input_buffer(tracer->udis, code, sizeof(code));
+	ud_disassemble(tracer->udis);
 
-	printf("[%#"PRIx32"] %-24s\n", eip, ud_insn_asm(trace->ud_obj));
+	IRBlock *block = decode(tracer->udis);
+
+	printf("[%#"PRIx32"] %-24s\n", eip, ud_insn_asm(tracer->udis));
 }
